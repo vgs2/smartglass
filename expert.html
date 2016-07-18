@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="keywords" content="Siemens, Remote Collabaration" />
+    <meta name="viewport" content="width=device-width">
+    <title>Siemens Support Service</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href='fonts\roboto.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/main.css"> </head>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    background: #000;
+}
+
+
+/*CSS FOR THE TOP BAR and just below the top bar*/
+
+.siemens-support {
+    background: black;
+    color: white;
+    font-size: 0.7em;
+    height: 2%;
+    padding-left: 30px;
+    line-height: 0.9em;
+}
+
+.main-bar {
+    background: navy;
+    color: white;
+    height: 4%;
+}
+
+.person {
+    display: inline-block;
+}
+
+.icon {
+    float: right;
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+}
+
+div.toolbar {
+    background: #00273b;
+    height: 616px;
+    width: 60px;
+}
+
+div.toolbar .icon {
+    display: block;
+    float: none;
+}
+
+.work-area .stage {
+    width: 840px;
+    height: 630px;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 100px;
+}
+
+.work-area video.cameratwo {
+    z-index: 6;
+    top: 450px;
+    height: 150px;
+    width: 200px;
+    background: black;
+    border: 2px solid white;
+    position: absolute;
+}
+
+.work-area video.camera {
+    z-index: 1;
+}
+
+.work-area img {
+    z-index: 2;
+}
+
+.work-area div#leapcanvas {
+    z-index: 3;
+    overflow: hidden;
+}
+
+.work-area canvas {
+    z-index: 4;
+}
+
+.work-area canvas:hover {}
+
+.work-area img.freezebutton {
+    z-index: 5;
+    position: absolute;
+    top: 530px;
+    left: 460px;
+}
+
+.freezebutton {
+    width: 104px;
+    height: 40px;
+    font-size: 1.4em;
+    position: absolute;
+    top: 550px;
+    left: 480px;
+}
+
+
+/**CSS for whole the main stage*/
+</style>
+
+<body ng-app='main' ng-controller='main' class='col-md-12'>
+    <p class="row" style="background:black;color:white;margin-bottom:0;min-height:30px;line-height:30px;padding-left:30px"> Siemens Support Service <span class='right' style='float:right'>Bon Jovi <img src='img\down_arrow-04.png'/></span> </p>
+    <div class="row" style='background:#001b29;min-height:60px'> <span style="color:white;font-size:1.5em;line-height:60px;margin-left:30px">Task: Replace Keyboard</span> <img class='icon' src="img\hang_out-01.png"> <img class='icon' src="img\mic-01.png"> <img class='icon' src="img\cam-01.png">
+        <div class='person' style="float:right;color:white;font-size:1.5em;line-height:60px;padding-right:20px"> <img src='img\User-03.png' width="40" /> Nick Jovi </div>
+    </div>
+    <div class='row' ng-show='isInit'>
+        <h1 style="font-size:4em;margin:auto;margin-top:300px" align="center">Remote Expert Waiting for a Call </h1> </div>
+    <div class='row' ng-show='!isInit'>
+        <div class='toolbar col-md-1' style="padding-left:0px"> <img class='icon' ng-src='img\{{tool[0]}}.png' ng-click='switchTool(0)' /> <img class='icon' ng-src='img\{{tool[1]}}.png' ng-click='switchTool(1)' /> <img class='icon' ng-src='img\{{tool[2]}}.png' ng-click='switchTool(2)' /> <img class='icon' ng-src='img\{{tool[3]}}.png' ng-click='switchTool(3)' /> <img class='icon' ng-src='img\{{tool[4]}}.png' ng-click='switchTool(4)' />
+            <hr/> <img class='icon' ng-src='img\open_file.png' ng-click='pickFile()' /> </div>
+        <div class='main-area col-md-11'>
+            <div class='row'>
+                <div class='work-area col-md-12'> 
+					<video class="camera stage" autoplay></video> 
+					
+					
+					<canvas id='can' class='stage' ng-click='mouseClick($event)' ng-mousemove='mouseMove($event)' ng-mouseup="mouseUp($event)"ng-mousedown="mouseDown($event)" width=840 height=630></canvas>
+					
+					
+                    <div class='canvas stage' id='leapcanvas' ng-show='leapmotionon'></div>
+					<img class='stage' src='{{imageData}}' ng-show='frozen' /> 
+					<img class='freezebutton' src='img\{{freezesource[frozen?1:0]}}.png' ng-click='freeze()' /> 
+					<video class='cameratwo' autoplay ng-show='frozen'></video> </div>
+            </div>
+        </div>
+    </div>
+<input type='file' id='filepicker' style='display:none' onchange='angular.element(this).scope().fileNameChanged(this)'> <canvas id='hiddencanvas' width=840 height=630 style='display:none'></canvas> </body>
+
+<!--Everything that is related to leap can be skiped, it is not yet implemented-->	
+
+<script src="js/lib/three.js"></script>
+<script src="js/lib/leap.js"></script>
+<script src="js/lib/leap-plugins.js"></script>
+<script src="js/lib/leap-rigged-hand.js"></script>
+<script src="js/lib/createjs.js"></script>
+<script src="js/lib/jquery.js"></script>
+<script src="js/lib/angular.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/lib/adapter.js"></script>
+<script src="js/initial.js"></script>
+
+</html>
