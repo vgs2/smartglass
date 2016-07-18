@@ -1,5 +1,6 @@
 var app=angular.module('main', []);
 
+
 app.controller('main', function ($rootScope,$scope,$timeout){
 
     //all about easelJS
@@ -9,6 +10,7 @@ app.controller('main', function ($rootScope,$scope,$timeout){
     var labels=[];
     var label_image=new Image();
     label_image.src="img/tag.png";
+	//createjs.Touch.enable(stage);
 
     stage.addChild(mousePointer);
     stage.addChild(drawing);
@@ -81,10 +83,12 @@ app.controller('main', function ($rootScope,$scope,$timeout){
 
         stage.update();      
     })
-
+	
+	
 
     socket.on('label',function(message){
-        
+		
+        globalAuxiliar = 1;
         if(message.type=='new'){
             var bitmap=new createjs.Bitmap(label_image);
             bitmap.x=message.x-100;
@@ -106,9 +110,19 @@ app.controller('main', function ($rootScope,$scope,$timeout){
 
         }
         else if(message.type=='update'){
-            labels[labels.length-1].text.text+=message.text;
-
+			
+			
+			if(message.text == '#'){
+				
+				labels[labels.length-1].text.text=labels[labels.length-1].text.text.substring(0,labels[labels.length-1].text.text.length-1);
+				
+			}
+			else{
+				labels[labels.length-1].text.text+=message.text;
+			
+			}
         }
+		
         stage.update();      
     })
 
