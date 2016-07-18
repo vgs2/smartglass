@@ -6,6 +6,7 @@ app.controller('main', function ($scope,$timeout){
     var stage = new createjs.Stage("can");
     var mousePointer = new createjs.Shape();
     var drawing = new createjs.Shape();
+	createjs.Touch.enable("can");
     var labels=[];
 
     var label_image=new Image();
@@ -18,7 +19,10 @@ app.controller('main', function ($scope,$timeout){
 
 
     //Get the IP address of the server where the leap motion is 
-    var ipaddress='';
+    //var detectBackspace = new Event("detectBackspace");
+	
+	
+	var ipaddress='';
 
     //stores the data about incoming screenshots
     $scope.imageData=null;
@@ -119,12 +123,12 @@ app.controller('main', function ($scope,$timeout){
         stage.update();      
     })
 
-
     socket.on('label',function(message){
-        
+		
+        globalAuxiliar = 1;
         if(message.type=='new'){
             var bitmap=new createjs.Bitmap(label_image);
-            bitmap.x=message.x-60;
+            bitmap.x=message.x-100;
             bitmap.y=message.y-120;
             bitmap.scaleX=0.8;
             bitmap.scaleY=0.8;
@@ -132,7 +136,7 @@ app.controller('main', function ($scope,$timeout){
             var text=new createjs.Text(' ','20px Arial','#fff');
             text.maxWidth=200;
             text.textAlign="center"
-            text.x=message.x+80-60;
+            text.x=message.x+80-100;
             text.y=message.y+22-120;
             stage.addChild(bitmap)
             stage.addChild(text)
@@ -143,9 +147,19 @@ app.controller('main', function ($scope,$timeout){
 
         }
         else if(message.type=='update'){
-            labels[labels.length-1].text.text+=message.text;
-
+			
+			
+			if(message.text == '#'){
+				
+				labels[labels.length-1].text.text=labels[labels.length-1].text.text.substring(0,labels[labels.length-1].text.text.length-1);
+				
+			}
+			else{
+				labels[labels.length-1].text.text+=message.text;
+			
+			}
         }
+		
         stage.update();      
     })
 
@@ -253,8 +267,8 @@ app.controller('main', function ($scope,$timeout){
         }
         else{
             //out in the field beaming the video
-            var video_constraints={mandatory:{maxWidth:640,maxHeight:480}};
-            var constraints = {video: video_constraints,audio:true};
+            var video_constraints={mandatory:{maxWidth:854,maxHeight:480}};
+            var constraints = {video: video_constraints,audio:true}; //kills all audi
             getUserMedia(constraints, getMediaSuccessCallback, logError);
         }
         
